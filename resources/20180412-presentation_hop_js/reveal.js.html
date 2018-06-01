@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<!-- saved from url=(0024)http://localhost:8000/#/ -->
+<html class=" js no-mobile desktop no-ie chrome chrome65 root-section gradient rgba opacity textshadow multiplebgs boxshadow borderimage borderradius cssreflections csstransforms csstransitions no-touch retina fontface domloaded w-1083 gt-240 gt-320 gt-480 gt-640 gt-768 gt-800 gt-1024 lt-1280 lt-1440 lt-1680 lt-1920 no-portrait landscape" id="index-page"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="./reveal.js_files/reveal.css">
+		<link rel="stylesheet" href="./reveal.js_files/solarized.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="./reveal.js_files/zenburn.css">
+
+		<!-- Import custom css -->
+		<link rel="stylesheet" href="./reveal.js_files/custom.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script><link rel="stylesheet" type="text/css" href="./reveal.js_files/paper.css"><script type="text/javascript" src="./reveal.js_files/marked.js"></script><script type="text/javascript" src="./reveal.js_files/markdown.js"></script><script type="text/javascript" src="./reveal.js_files/external.js"></script><script type="text/javascript" src="./reveal.js_files/notes.js"></script><script type="text/javascript" src="./reveal.js_files/highlight.js"></script>
+	</head>
+	<body>
+		<div class="reveal slide has-vertical-slides has-horizontal-slides ready" role="application" data-transition-speed="default" data-background-transition="fade">
+			<div class="slides" style="width: 960px; height: 700px; left: 50%; top: 50%; bottom: auto; right: auto; transform: translate(-50%, -50%) scale(0.807771);">
+				<section class="center present" data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" style="top: 140px; display: block;">
+  <h1>Introduction to hop.js</h1>
+</section>
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" class="stack future" style="display: block;" data-previous-indexv="0" hidden="" aria-hidden="true">
+  <h2>What is hop.js</h2>
+
+  <section style="display: block;" class="" aria-hidden="true">
+    <h3>Programming Language</h3>
+    <ul>
+      <li>Multi-tier syntax, extending JavaScript to distributed applications</li>
+      <li>In-language XML notation for HTML specifications</li>
+      <li>Unified syntax and API on all supported platforms</li>
+    </ul>
+  </section>
+
+  <section class="future" aria-hidden="true" style="display: block;" hidden="">
+    <h3>Run-time Environment</h3>
+    <ul>
+      <li>Built-in components and high level API</li>
+      <li>Services (remote function invocation) and server events</li>
+      <li>Parallel execution (JavaScript Workers)</li>
+      <li>Dynamic web server with authentication and authorization</li>
+      <li>Resource discovery</li>
+      <li>Dynamic application provisioning</li>
+    </ul>
+  </section>
+
+  <section class="future" aria-hidden="true" style="display: none;" hidden="">
+    <h3>Interoperability</h3>
+    <ul>
+      <li>Compatible with node.js / NPM</li>
+      <li>Support any add-on JavaScript library</li>
+      <li>Server or client for Web services</li>
+    </ul>
+  </section>
+
+  <section class="future" aria-hidden="true" style="display: none;" hidden="">
+    <img src="./reveal.js_files/hop.js.png" style="max-height: 500px; border: none; box-shadow: none;">
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" class="future" style="display: block;" hidden="" aria-hidden="true">
+  <h2>Installation</h2>
+  <div class="ta-left" style="margin-bottom: 30px;">
+    <h4>Linux / OSX</h4>
+    Go to <a href="http://hop.inria.fr/home/download.html" target="_blank">
+      hop.inria.fr
+    </a> and follow the instructions
+  </div>
+  <div class="ta-left">
+    <h4>Docker image</h4>
+    Download the image from the local docker registry
+    <pre style="margin: 0px auto; box-shadow: none;">      <code data-trim="" data-noescape="" class="hljs x86asm">$ docker image pull <span class="hljs-number">192.168</span><span class="hljs-meta">.12</span><span class="hljs-meta">.4</span>:<span class="hljs-number">5000</span>/hopjs4tocs
+$ docker container run -p <span class="hljs-number">8080</span>:<span class="hljs-number">8080</span> -ti --name hopjs4tocs <span class="hljs-number">192.168</span><span class="hljs-meta">.12</span><span class="hljs-meta">.4</span>:<span class="hljs-number">5000</span>/hopjs4tocs</code>
+    </pre>
+  </div>
+  <div class="ta-left" style="position: relative; top: -25px;">
+    <h4>Raspberry pi sd card</h4>
+    Download the archive and copy the content on the Raspberry pi SD card
+  </div>
+</section>
+
+
+				<!-- Hop.js examples -->
+				<section data-background-image="./reveal.js_files/sprinkles.png" data-background-size="10px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Hop.js example : Hello World</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">helloWorld.js</span>
+      <code data-trim="" data-noescape="" data-external="./helloWorld.js" style="max-height:500px;" class="hljs javascript">service hello() {
+ <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    "Hello, World"
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}</code>
+    </pre>
+  </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8080/hop/hello" target="_blank">http://localhost:8080/hop/hello</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8080/hop/hello" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource.html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/sprinkles.png" data-background-size="10px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Hop.js example : Dom</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">dom.js</span>
+      <code data-trim="" data-noescape="" data-external="./dom.js" style="max-height:500px;" class="hljs javascript">service dom() {
+  <span class="hljs-keyword">var</span> el = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>foo<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>bar<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>gee<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span></span>;
+
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+      ${el}
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">~{</span>
+        <span class="hljs-attr">var</span> <span class="hljs-attr">firstChild</span> = <span class="hljs-string">${el}.childNodes[</span> <span class="hljs-attr">0</span> ];
+
+        ${<span class="hljs-attr">el</span>}<span class="hljs-attr">.removeChild</span>( <span class="hljs-attr">firstChild</span> );
+        ${<span class="hljs-attr">el</span>}<span class="hljs-attr">.appendChild</span>( <span class="hljs-attr">firstChild</span> );
+      }&gt;</span>
+        rotate
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}</code>
+    </pre>
+  </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8081/hop/dom" target="_blank">http://localhost:8081/hop/dom</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8081/hop/dom" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(1).html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/sprinkles.png" data-background-size="10px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Hop.js example : Module</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">module.js</span>
+      <code data-trim="" data-noescape="" data-external="./module.js" style="max-height:200px;" class="hljs typescript"><span class="hljs-keyword">var</span> myModule = <span class="hljs-built_in">require</span>( <span class="hljs-string">"./myModule.js"</span> );
+
+service <span class="hljs-keyword">module</span>() {
+  <span class="hljs-keyword">return</span> myModule.sayHello();
+}</code>
+      <span style="font-size: 1.3em">myModule.js</span>
+      <code data-trim="" data-noescape="" data-external="./myModule.js" style="max-height:200px;" class="hljs javascript"><span class="hljs-keyword">var</span> name = <span class="hljs-string">"myModule"</span>;
+exports.sayHello = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  <span class="hljs-keyword">return</span> <span class="hljs-string">"Hello "</span> + name;
+};</code>
+    </pre>
+  </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8082/hop/module" target="_blank">http://localhost:8082/hop/module</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8082/hop/module" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(2).html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/sprinkles.png" data-background-size="10px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Hop.js example : Service</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">service.js</span>
+      <code data-trim="" data-noescape="" data-external="./service.js" style="max-height:500px;" class="hljs stata">function computeFact( <span class="hljs-keyword">n</span> ) {
+  <span class="hljs-keyword">if</span>( <span class="hljs-keyword">n</span> &lt;= 1 ) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">n</span>;
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">return</span> computeFact( <span class="hljs-keyword">n</span> - 1 ) * <span class="hljs-keyword">n</span>;
+  }
+}
+
+service <span class="hljs-keyword">fact</span>( <span class="hljs-keyword">n</span> ) { <span class="hljs-keyword">return</span> computeFact( <span class="hljs-keyword">n</span> ); }
+
+service svc() {
+  <span class="hljs-keyword">var</span> <span class="hljs-keyword">input</span> = &lt;<span class="hljs-keyword">input</span> size=<span class="hljs-string">"5"</span>/&gt;;
+  <span class="hljs-keyword">var</span> result = &lt;div&gt;&lt;/div&gt;;
+
+  <span class="hljs-keyword">return</span> &lt;html&gt;
+    ${ <span class="hljs-keyword">input</span> }
+    &lt;button onclick=~{
+      <span class="hljs-keyword">var</span> inputVal = ${ <span class="hljs-keyword">input</span> }.value;
+      ${ <span class="hljs-keyword">fact</span> }( inputVal ).<span class="hljs-keyword">post</span>( function( res ) {
+        ${ result }.innerHTML = <span class="hljs-string">"fact("</span> + inputVal + <span class="hljs-string">") = "</span> + res;
+      } );
+    }&gt;
+      compute!
+    &lt;/button&gt;
+    ${ result }
+  &lt;/html&gt;;
+}</code>
+    </pre>
+  </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8083/hop/svc" target="_blank">http://localhost:8083/hop/svc</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8083/hop/svc" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(3).html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/sprinkles.png" data-background-size="10px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Hop.js example : Broadcast</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">broadcast.js</span>
+      <code data-trim="" data-noescape="" data-external="./broadcast.js" style="max-height:500px;" class="hljs javascript"><span class="hljs-keyword">var</span> counter = <span class="hljs-number">0</span>;
+setInterval( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+  hop.broadcast( <span class="hljs-string">"counterEvent"</span>, ++counter );
+}, <span class="hljs-number">1000</span> );
+
+service getDom() {
+  <span class="hljs-keyword">var</span> domElement = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">table</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Firstname<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Lastname<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">th</span>&gt;</span>Age<span class="hljs-tag">&lt;/<span class="hljs-name">th</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">tr</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>Jill<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>Smith<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span><span class="hljs-tag">&lt;<span class="hljs-name">td</span>&gt;</span>50<span class="hljs-tag">&lt;/<span class="hljs-name">td</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">tr</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">table</span>&gt;</span></span>;
+  hop.broadcast( <span class="hljs-string">"domEvent"</span>, domElement );
+}
+
+service broadcast() {
+  <span class="hljs-keyword">var</span> dom = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span>;
+  <span class="hljs-keyword">var</span> counter = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">style</span>&gt;</span><span class="css">
+        <span class="hljs-selector-tag">table</span> { <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid black; }
+        <span class="hljs-selector-tag">tr</span>, <span class="hljs-selector-tag">th</span>, <span class="hljs-selector-tag">td</span> { <span class="hljs-attribute">border</span>: <span class="hljs-number">1px</span> solid grey; }
+      </span><span class="hljs-tag">&lt;/<span class="hljs-name">style</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">body</span> <span class="hljs-attr">onload</span>=<span class="hljs-string">~{</span>
+      <span class="hljs-attr">server.addEventListener</span>( "<span class="hljs-attr">domEvent</span>", <span class="hljs-attr">function</span>( <span class="hljs-attr">event</span> ) {
+        ${ <span class="hljs-attr">dom</span> }<span class="hljs-attr">.appendChild</span>( <span class="hljs-attr">event.value</span> );
+      } );
+      <span class="hljs-attr">server.addEventListener</span>( "<span class="hljs-attr">counterEvent</span>", <span class="hljs-attr">function</span>( <span class="hljs-attr">event</span> ) {
+        ${ <span class="hljs-attr">counter</span> }<span class="hljs-attr">.innerHTML</span> = <span class="hljs-string">event.value;</span>
+      } );
+    }&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Counter: ${ counter }<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">~{</span>
+        ${ <span class="hljs-attr">getDom</span> }()<span class="hljs-attr">.post</span>();
+      }&gt;</span>
+        Get dom element
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+      ${ dom }
+    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}</code>
+    </pre>
+  </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8084/hop/broadcast" target="_blank">http://localhost:8084/hop/broadcast</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8084/hop/broadcast" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(4).html">
+    </iframe>
+  </section>
+</section>
+
+				<!-- End of hop.js examples -->
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="future" style="display: none;">
+  <h2>Supported IoT platforms</h2>
+  <ul style="width: 60%; margin-top: 40px;">
+    <li style="clear: right;">
+      Raspberry pi
+      <img src="./reveal.js_files/raspberrypi.png" style="height: 100px; vertical-align: middle; border: none; box-shadow: none; float: right; position: relative; top: -40px;">
+    </li>
+    <li style="clear: right;">
+      Legato
+      <img src="./reveal.js_files/legato.png" style="height: 100px; vertical-align: middle; border: none; box-shadow: none; float: right; position: relative; top: -40px;">
+    </li>
+    <li style="clear: right;">
+      IoT.js
+      <img src="./reveal.js_files/jerryscript.png" style="height: 100px; vertical-align: middle; border: none; box-shadow: none; float: right; position: relative; top: -40px;">
+    </li>
+  </ul>
+</section>
+
+				<!-- Raspberrypi begin -->
+				<section data-background-image="./reveal.js_files/blu_stripes.png" data-background-size="100px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="future" style="display: none;">
+  <h2>Hop.js for raspberry pi</h2>
+  <img src="./reveal.js_files/hop.js_raspberry.png" style="max-height: 500px; border: none; box-shadow: none;">
+</section>
+
+
+				<section data-background-image="./reveal.js_files/blu_stripes.png" data-background-size="100px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Raspberry pi example : Hello led</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">helloLed.js</span>
+      <code data-trim="" data-noescape="" data-external="./helloLed.js" style="max-height:500px;" class="hljs javascript"><span class="hljs-keyword">const</span> PigpioClient = <span class="hljs-built_in">require</span>( <span class="hljs-string">"pigpio-client"</span> );
+<span class="hljs-keyword">const</span> pi = <span class="hljs-keyword">new</span> PigpioClient.pigpio( { <span class="hljs-attr">host</span>: <span class="hljs-string">"cumulus.local"</span>, <span class="hljs-attr">port</span>: <span class="hljs-number">8888</span> } );
+
+<span class="hljs-keyword">var</span> gpioLed;
+
+pi.on( <span class="hljs-string">"connected"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params"> info </span>) </span>{
+  <span class="hljs-built_in">console</span>.log( <span class="hljs-string">"Connected to raspberry pi"</span> );
+
+  gpioLed = pi.gpio( <span class="hljs-number">18</span> );
+  gpioLed.modeSet( <span class="hljs-string">"out"</span> );
+} );
+
+service hello() {
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">~{</span>
+        ${ <span class="hljs-attr">switchLedState</span> }()<span class="hljs-attr">.post</span>();
+      }&gt;</span>
+        Switch led state
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}
+
+<span class="hljs-keyword">var</span> ledState = <span class="hljs-literal">false</span>;
+service switchLedState() {
+  <span class="hljs-keyword">if</span>( gpioLed ) {
+    ledState = !ledState;
+    gpioLed.write( ledState );
+  }
+  <span class="hljs-keyword">return</span> ;
+}</code>
+    </pre>
+  </section>
+    <section class="future" aria-hidden="true" style="display: none;">
+      <img src="./reveal.js_files/helloLed.png" style="max-height: 500px;">
+    </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8180/hop/hello" target="_blank">http://localhost:8180/hop/hello</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8180/hop/hello" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(5).html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/blu_stripes.png" data-background-size="100px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Raspberry pi example : Monitor</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">monitor.js</span>
+      <code data-trim="" data-noescape="" data-external="./monitor.js" style="max-height:500px;" class="hljs javascript"><span class="hljs-keyword">const</span> PigpioClient = <span class="hljs-built_in">require</span>( <span class="hljs-string">"pigpio-client"</span> );
+<span class="hljs-keyword">const</span> pi = <span class="hljs-keyword">new</span> PigpioClient.pigpio( { <span class="hljs-attr">host</span>: <span class="hljs-string">"cumulus.local"</span>, <span class="hljs-attr">port</span>: <span class="hljs-number">8888</span> } );
+
+<span class="hljs-keyword">var</span> ledState = <span class="hljs-literal">false</span>;
+<span class="hljs-keyword">var</span> buttonState = <span class="hljs-literal">false</span>;
+pi.on( <span class="hljs-string">"connected"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> info </span>) </span>{
+  <span class="hljs-built_in">console</span>.log( <span class="hljs-string">"Connected to raspberry pi"</span> );
+
+  <span class="hljs-keyword">const</span> gpioLed = pi.gpio( <span class="hljs-number">18</span> );
+  gpioLed.modeSet( <span class="hljs-string">"out"</span> );
+  gpioLed.notify( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> level, tick </span>) </span>{
+    ledState = level;
+    hop.broadcast( <span class="hljs-string">"ledStateEvent"</span>, level );
+  } );
+
+  <span class="hljs-keyword">const</span> gpioButton = pi.gpio( <span class="hljs-number">22</span> );
+  gpioButton.modeSet( <span class="hljs-string">"in"</span> );
+  gpioButton.notify( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> level, tick </span>) </span>{
+    gpioLed.write( level, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> err, resultCode </span>) </span>{
+      <span class="hljs-keyword">if</span>( err ) {
+        <span class="hljs-built_in">console</span>.error( <span class="hljs-string">"Error while writing the led state:"</span>, err );
+      }
+    } );
+    hop.broadcast( <span class="hljs-string">"buttonStateEvent"</span>, level );
+  } );
+} );
+
+service monitor() {
+  <span class="hljs-keyword">var</span> ledStateTag = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>${ ledState ? "on" : "off" }<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+  <span class="hljs-keyword">var</span> buttonStateTag = <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">span</span>&gt;</span>${ buttonState ? "on" : "off" }<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span></span>;
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">body</span> <span class="hljs-attr">onload</span>=<span class="hljs-string">~{</span>
+      <span class="hljs-attr">server.addEventListener</span>( "<span class="hljs-attr">ledStateEvent</span>", <span class="hljs-attr">function</span>( <span class="hljs-attr">event</span> ) {
+        ${ <span class="hljs-attr">ledStateTag</span> }<span class="hljs-attr">.innerHTML</span> = <span class="hljs-string">event.value</span> ? "<span class="hljs-attr">on</span>" <span class="hljs-attr">:</span> "<span class="hljs-attr">off</span>";
+      } );
+      <span class="hljs-attr">server.addEventListener</span>( "<span class="hljs-attr">buttonStateEvent</span>", <span class="hljs-attr">function</span>( <span class="hljs-attr">event</span> ) {
+        ${ <span class="hljs-attr">buttonStateTag</span> }<span class="hljs-attr">.innerHTML</span> = <span class="hljs-string">event.value</span> ? "<span class="hljs-attr">on</span>" <span class="hljs-attr">:</span> "<span class="hljs-attr">off</span>";
+      } );
+    }&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Led state: ${ ledStateTag }<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>Button state: ${ buttonStateTag }<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}</code>
+    </pre>
+  </section>
+    <section class="future" aria-hidden="true" style="display: none;">
+      <img src="./reveal.js_files/monitor.png" style="max-height: 500px;">
+    </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8181/hop/monitor" target="_blank">http://localhost:8181/hop/monitor</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8181/hop/monitor" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(6).html">
+    </iframe>
+  </section>
+</section>
+
+				<section data-background-image="./reveal.js_files/blu_stripes.png" data-background-size="100px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>Raspberry pi example : Servo</h2>
+  <section style="display: none;">
+    <pre style="margin: 0px auto; box-shadow: none;">      <span style="font-size: 1.3em">servo.js</span>
+      <code data-trim="" data-noescape="" data-external="./servo.js" style="max-height:500px;" class="hljs javascript"><span class="hljs-keyword">const</span> PigpioClient = <span class="hljs-built_in">require</span>( <span class="hljs-string">"pigpio-client"</span> );
+<span class="hljs-keyword">const</span> pi = <span class="hljs-keyword">new</span> PigpioClient.pigpio( { <span class="hljs-attr">host</span>: <span class="hljs-string">"cumulus.local"</span>, <span class="hljs-attr">port</span>: <span class="hljs-number">8888</span> } );
+
+<span class="hljs-keyword">var</span> gpioServo;
+pi.on( <span class="hljs-string">"connected"</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> info </span>) </span>{
+  <span class="hljs-built_in">console</span>.log( <span class="hljs-string">"Connected to raspberry pi"</span> );
+
+  gpioServo = pi.gpio( <span class="hljs-number">24</span> );
+  gpioServo.modeSet( <span class="hljs-string">"out"</span> );
+
+  gpioServo.setPWMFrequency( <span class="hljs-number">50</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"> err, hz </span>) </span>{
+    <span class="hljs-keyword">if</span>( err ) {
+      <span class="hljs-built_in">console</span>.error( <span class="hljs-string">"Error while setting the PWM frequency:"</span>, err );
+    }
+  } );
+} );
+
+service servo() {
+  <span class="hljs-keyword">return</span> <span class="xml"><span class="hljs-tag">&lt;<span class="hljs-name">html</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">~{</span>
+        ${ <span class="hljs-attr">moveServo</span> }()<span class="hljs-attr">.post</span>();
+      }&gt;</span>
+        Move the servo
+      <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span></span>;
+}
+
+<span class="hljs-keyword">var</span> interval;
+service moveServo() {
+  <span class="hljs-keyword">if</span>( !gpioServo ) <span class="hljs-keyword">return</span> ;
+  <span class="hljs-keyword">if</span>( interval ) {
+    clearInterval( interval );
+    interval = <span class="hljs-literal">null</span>;
+  }
+
+  <span class="hljs-keyword">var</span> currentDutyCycle = <span class="hljs-number">800</span>;
+  <span class="hljs-keyword">var</span> step = <span class="hljs-number">10</span>;
+  interval = setInterval( <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{
+    gpioServo.servo( currentDutyCycle );
+    currentDutyCycle += step;
+
+    <span class="hljs-keyword">if</span>( currentDutyCycle &gt;= <span class="hljs-number">2200</span> )
+      step *= <span class="hljs-number">-1</span>;
+    <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span>( currentDutyCycle &lt;= <span class="hljs-number">800</span> ) {
+      clearInterval( interval );
+      gpioServo.servo( <span class="hljs-number">0</span>, <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>) </span>{} ); <span class="hljs-comment">// Stop the servo</span>
+    }
+  }, <span class="hljs-number">50</span> );
+}</code>
+    </pre>
+  </section>
+    <section class="future" aria-hidden="true" style="display: none;">
+      <img src="./reveal.js_files/servo.png" style="max-height: 500px;">
+    </section>
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:8182/hop/servo" target="_blank">http://localhost:8182/hop/servo</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:8182/hop/servo" width="95%" height="500px" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" src="./reveal.js_files/saved_resource(7).html">
+    </iframe>
+  </section>
+</section>
+
+
+				<section data-background-image="./reveal.js_files/blu_stripes.png" data-background-size="100px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="stack future" style="display: none;" data-previous-indexv="0">
+  <h2>GPIO Simulator</h2>
+  <section style="display: none;">
+    <div class="ta-left">
+      If you don't have a raspberry pi, you can use the denimbo simulator for raspberry pi GPIO
+    </div>
+
+    <h3 class="ta-left" style="margin-top: 40px;">How to use</h3>
+    <div class="ta-left">
+      Unzip the archive and go to simulator folder.
+      <pre style="margin: 0px auto; box-shadow: none;">        <code data-trim="" data-noescape="" class="hljs stylus">$ hop -<span class="hljs-selector-tag">p</span> <span class="hljs-number">9090</span> simu.js</code>
+      </pre>
+
+      <div class="ta-left" style="position: relative; top: -25px;">
+        Go to <a href="http://localhost:9090/hop/simu" target="_blank">http://localhost:9090/hop/simu</a><br>
+        You can debug and test your application without a raspberry pi
+      </div>
+    </div>
+  </section>
+
+  <section class="future" aria-hidden="true" style="display: none;">
+    <a href="http://localhost:9090/hop/simu" target="_blank">http://localhost:9090/hop/simu</a>
+    <iframe class="iframe-decoration" data-src="http://localhost:9090/hop/simu" width="550px" height="500px" frameborder="10" marginwidth="100" marginheight="100" scrolling="yes" src="./reveal.js_files/saved_resource(8).html">
+    </iframe>
+  </section>
+</section>
+
+				<!-- End of raspberrypi -->
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="future" style="display: none;">
+  <h2>Discover devices and resources</h2>
+  <ul style="margin-top: 30px;">
+    <li>
+      Server based: devices register to a common server. Works in LAN/WAN environments
+    </li>
+    <li style="margin-top: 20px;">
+      Bluetooth: devices advertise services <em>or</em> gateway advertises itself. See noble and bleno npm packages
+    </li>
+    <li style="margin-top: 20px;">
+      mDNS / DNS-SD: Bonjour, avahi, frameworks for automatic resources discovery
+    </li>
+  </ul>
+</section>
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="future" style="display: none;">
+  <h2>More hop.js examples</h2>
+  <div class="ta-left" style="margin-bottom: 30px;">
+    The hop.js API reference is available at <a href="http://hop.inria.fr/home/index.html" target="_blank">hop.inria.fr</a>
+  </div>
+  <div class="ta-left">
+    Lot of examples are available on native installation or docker:<br>
+    <ul>
+      <li>native: go to the hop.js's unziped archive</li>
+      <li>docker: go to the home dir</li>
+    </ul>
+
+    <pre style="margin: 0px auto; box-shadow: none;">      <code data-trim="" data-noescape="" class="hljs shell"><span class="hljs-meta">$</span><span class="bash"> hop examples/examples/examples.js</span>
+<span class="hljs-meta">#</span><span class="bash"> See the result at http://localhost:8080/hop/examples</span></code>
+    </pre>
+  </div>
+</section>
+
+				<section data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" hidden="" aria-hidden="true" class="future" style="display: none;">
+  <h2>More resources</h2>
+  <ul>
+    <li>
+      The <a href="https://nodejs.org/docs/v0.10.35/api/" target="_blank">node.js API</a>
+    </li>
+    <li>
+      The <a href="https://www.npmjs.com/package/pigpio-client" target="_blank">pigpio-client</a> npm package
+    </li>
+  </ul>
+</section>
+
+				<section class="center future" data-background-image="./reveal.js_files/dust_scratches.png" data-background-size="400px" data-background-repeat="repeat" hidden="" aria-hidden="true" style="top: 350px; display: none;">
+  <h1>Thank you</h1>
+  <img src="./reveal.js_files/denimbo.png" style="max-height: 100px; border:none; box-shadow: none;">
+  <div>
+    <a href="mailto:vincent.prunet@denimbo.com">vincent.prunet@denimbo.com</a>
+    <a href="mailto:cedric.duminy@denimbo.com">cedric.duminy@denimbo.com</a>
+  </div>
+</section>
+
+			</div>
+		<div class="backgrounds"><div class="slide-background center present" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" data-loaded="true" style="background-size: 400px; background-repeat: repeat; display: block; background-image: url(&quot;./reveal.js_files/dust_scratches.png&quot;);"></div><div class="slide-background stack future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" data-loaded="true" style="background-size: 400px; background-repeat: repeat; display: block; background-image: url(&quot;./reveal.js_files/dust_scratches.png&quot;);"><div class="slide-background present" data-loaded="true" style="display: block;"></div><div class="slide-background future" data-loaded="true" style="display: block;"></div><div class="slide-background future" style="display: none;" data-loaded="true"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" data-loaded="true" style="background-size: 400px; background-repeat: repeat; display: block; background-image: url(&quot;./reveal.js_files/dust_scratches.png&quot;);"></div><div class="slide-background stack future" data-background-hash="null10px./reveal.js_files/sprinkles.pngnullnullnullrepeatnullnull" data-background-size="10px" data-loaded="true" style="background-size: 10px; background-repeat: repeat; display: none; background-image: url(&quot;./reveal.js_files/sprinkles.png&quot;);"><div class="slide-background present" data-loaded="true" style="display: none;"></div><div class="slide-background future" data-loaded="true" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null10px./reveal.js_files/sprinkles.pngnullnullnullrepeatnullnull" data-background-size="10px" data-loaded="true" style="background-size: 10px; background-repeat: repeat; display: none; background-image: url(&quot;./reveal.js_files/sprinkles.png&quot;);"><div class="slide-background present" data-loaded="true" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null10px./reveal.js_files/sprinkles.pngnullnullnullrepeatnullnull" data-background-size="10px" style="background-size: 10px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null10px./reveal.js_files/sprinkles.pngnullnullnullrepeatnullnull" data-background-size="10px" style="background-size: 10px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null10px./reveal.js_files/sprinkles.pngnullnullnullrepeatnullnull" data-background-size="10px" style="background-size: 10px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" style="background-size: 400px; background-repeat: repeat; display: none;"></div><div class="slide-background future" data-background-hash="null100px./reveal.js_files/blu_stripes.pngnullnullnullrepeatnullnull" data-background-size="100px" style="background-size: 100px; background-repeat: repeat; display: none;"></div><div class="slide-background stack future" data-background-hash="null100px./reveal.js_files/blu_stripes.pngnullnullnullrepeatnullnull" data-background-size="100px" style="background-size: 100px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null100px./reveal.js_files/blu_stripes.pngnullnullnullrepeatnullnull" data-background-size="100px" style="background-size: 100px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null100px./reveal.js_files/blu_stripes.pngnullnullnullrepeatnullnull" data-background-size="100px" style="background-size: 100px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background stack future" data-background-hash="null100px./reveal.js_files/blu_stripes.pngnullnullnullrepeatnullnull" data-background-size="100px" style="background-size: 100px; background-repeat: repeat; display: none;"><div class="slide-background present" style="display: none;"></div><div class="slide-background future" style="display: none;"></div></div><div class="slide-background future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" style="background-size: 400px; background-repeat: repeat; display: none;"></div><div class="slide-background future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" style="background-size: 400px; background-repeat: repeat; display: none;"></div><div class="slide-background future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" style="background-size: 400px; background-repeat: repeat; display: none;"></div><div class="slide-background center future" data-background-hash="null400px./reveal.js_files/dust_scratches.pngnullnullnullrepeatnullnull" data-background-size="400px" style="background-size: 400px; background-repeat: repeat; display: none;"></div></div><div class="progress" style="display: block;"><span style="width: 0px;"></span></div><aside class="controls" data-controls-layout="bottom-right" data-controls-back-arrows="faded" style="display: block;"><button class="navigate-left" aria-label="previous slide" disabled="disabled"><div class="controls-arrow"></div></button><button class="navigate-right highlight enabled" aria-label="next slide"><div class="controls-arrow"></div></button><button class="navigate-up" aria-label="above slide" disabled="disabled"><div class="controls-arrow"></div></button><button class="navigate-down" aria-label="below slide" disabled="disabled"><div class="controls-arrow"></div></button></aside><div class="slide-number" style="display: none;"></div><div class="speaker-notes" data-prevent-swipe="" tabindex="0"></div><div class="pause-overlay"></div><div id="aria-status-div" aria-live="polite" aria-atomic="true" style="position: absolute; height: 1px; width: 1px; overflow: hidden; clip: rect(1px, 1px, 1px, 1px);">
+  Introduction to hop.js
+</div></div>
+
+		<script src="./reveal.js_files/head.min.js"></script>
+		<script src="./reveal.js_files/reveal.js"></script>
+
+		<script>
+			// More info about config & dependencies:
+			// - https://github.com/hakimel/reveal.js#configuration
+			// - https://github.com/hakimel/reveal.js#dependencies
+			Reveal.initialize({
+				history: true,
+				center: false,
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: './node_modules/reveal_external/external/external.js', condition: function() {
+              return !!document.querySelector( '[data-external],[data-external-replace]' );
+            }
+          }
+				]
+			});
+		</script>
+	<script src="./reveal.js_files/livereload.js" async="" defer=""></script>
+
+</body></html>

@@ -1,0 +1,39 @@
+/* Background pattern from Toptal Subtle Patterns */
+
+
+.column-code {
+  max-width: 66%;
+}
+.column-iframe {
+  max-width: 33%
+}
+
+.col-left {
+  float: left;
+}
+
+.col-right {
+  float: right;
+}
+
+.iframe-decoration {
+  border:3px solid #666;
+  margin-bottom:5px;
+  background-color: white;
+}
+
+.no-max-height {
+  max-height: none;
+}
+
+.ta-left {
+  text-align: left;
+}
+
+.no-border {
+  border: none;
+}
+
+.no-box-shadow {
+  box-shadow: none;
+}
