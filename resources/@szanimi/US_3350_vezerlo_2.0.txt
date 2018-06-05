@@ -1,0 +1,1511 @@
+#include <LiquidCrystal_I2C.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+#include <DFPlayer_Mini_Mp3.h>
+#include <EEPROM.h>
+LiquidCrystal_I2C lcd (0x3F, 2, 1, 0, 4, 5, 6, 7, 3, POSITIVE);
+int ssd = 0, noUs;
+byte leSzam, gyB = 0, reSet = 0, minRiasztasKi = 1, maxRiasztasKi = 1, komm = 0, kommTar = 0, autoKomm = 1, hangeroLe = 0;
+byte tavMeres = 0, beuzemeles = 0, inditas = 0, uzemi = 0, beallitas = 0, ujrainditas = 0, leallitas = 0, kikapcsolas = 0, visszaallitas = 0;
+int encoderNyg = 4, encodergomb, aaaa, VizSzintRef;
+int vizszint = 0, vizszintTmp = 0, magTartVizSz = 0, vszint, dddd;
+byte a, tizesegybe, egy, tiz, szaz, ezer, fff, xIbit, cccc;
+byte i, f, s = 255, bt, adatShift, hangero = 20, noHangero = 20, eq = 3, fenyErzekelo = 0;
+int szf = 0, hangosSzam, usz = 0, fmsz = 0, korrekcio = 0, korrekcioTmp = 0, korrekcioEjel =0, Elso, Masodik, rogzMagas, atlSzam = 0, atlagSzamolo = 0;
+byte kszv = 0, korr, hangszamNeg, v;
+byte alm = 0, sugo = 0, sugoFsor = 0;
+int menuLepteto = 0, menuLepSzint = 0, b;
+byte mL102Szint = 120, beallAlmenu = 0, u = 0, eprElso, eprMasodik;
+int randNumber;
+int kjhfeny = 0, kjhfenyIdo = 1500, xyz;
+int minSzint = 0, maxSzint = 0;  //8420 - 8430
+byte x = 0, xx = 0, z, zz, elso, masodik, l = 1, aSzv = 1, aSzvTar, riasztSzintKozep;
+byte kjhfenyIdomin = 0, beallKiirTilto = 0;
+int val;
+int encoder0PinA = 2;
+int encoder0PinB = 3;
+int encoder0PinALast = HIGH;
+int n = LOW;
+int atlagVizSzint = 0, atlagSzintTar;
+char initTomb[16] = {
+  ' ', 'b', 'y', ' ', 'S', 'z', 'a', 'n', 't', 'a', 'i', ' ', 'I', 'm', 'r', 'e'};
+char kikapcsTomb[16] = {
+  ' ', 'V', 'i', 'z', 's', 'z', 'i', 'n', 't', ' ', 'm', 'e', 'r', 'o', ' ', ' '};
+char kikapcsTomb2[16] = {
+  'U', 'L', 'T', 'R', 'A', 'S', 'O', 'N', 'I', 'C', '-', '-', '3', '3', '5', '0'};
+char kikapcsTomb3[16] = {
+  'A', 'R', 'D', 'U', 'I', 'N', 'O', ' ', 'P', 'r', 'o', 'j', 'e', 'c', 't', ' '};
+int vizSzint = 9999, reszEredmeny, reszEredmeny2, egyes, tizes, szazas, ezres;
+SoftwareSerial mySerial (7, 8); // RX, TX
+SoftwareSerial kijelSerial (12,13); // RX, TX
+SoftwareSerial meroSerial(6,10);
+byte hangSzam[23] = {
+  0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,};
+int hangHossz[23] = {
+  570, 380, 745, 650, 580, 320, 390, 504, 585, 675, 562, 560, 815, 650, 570, 770, 625, 865, 850, 470, 500, 600,};
+// 0    1    2    3    4    5    6    7    8    9    10   11   12   13   14   15   16   17   18   19   20   21 
+int noInv, invs, inv;
+
+void setup (){
+  digitalWrite (7, LOW);
+  lcd.begin (16, 2);
+  lcd.clear ();
+  lcd.setCursor (0, 0);
+  lcd.print ("Kis turelmet....");
+  lcd.setCursor (0, 1);
+  lcd.print ("ULTRASONIC--3350");
+  pinMode (encoder0PinA, INPUT);
+  pinMode (encoder0PinB, INPUT);
+  pinMode (encodergomb, INPUT);
+  pinMode (A3, INPUT);
+  pinMode (A2, INPUT);
+  pinMode (A1, INPUT);
+  pinMode (A0, INPUT);
+  pinMode (7, OUTPUT);
+  pinMode (6, INPUT);
+  Serial.begin (9600);
+  mySerial.begin (9600);
+  kijelSerial.begin (9600);
+  meroSerial.begin (9600);
+  Wire.begin ();
+  mp3_set_serial (mySerial);
+  mp3_set_volume (hangero);
+  mp3_set_EQ (eq);
+  eepromRead ();
+  delay (200);
+}
+
+void loop () {
+  bootSelect ();
+  lcd.clear ();
+  if (tavMeres == 1) {
+    lcd.setCursor (0, 0);
+    lcd.print ("Szenzor a viztol");
+    lcd.setCursor (0, 1);
+    lcd.print (" --- cm-re van. ");
+  }
+  while (tavMeres == 1){
+    funkcioGomb ();
+    adatAVet ();
+    if (vszint>99){
+      lcd.setCursor (1, 1);
+      lcd.print (vszint);
+    }
+    else {
+      lcd.setCursor (2, 1);
+      lcd.print (vszint);
+      lcd.setCursor (1, 1);
+      lcd.print (" ");
+    }
+    if (encodergomb == LOW){
+      tavMeres = 0;
+      beuzemeles = 1;
+    }  
+  }
+
+  lcd.clear ();
+  while (inditas == 1){
+    lcd.setCursor (0, 0);
+    lcd.print ("Betoltes....");
+    szovegFutas ();
+    delay (20);
+    inditas = 0;
+    uzemi = 1;
+    fmsz = 0;
+    mp3_set_volume (hangero);
+    mp3_set_EQ (eq);
+    if (komm == 1) {
+      mp3_play (50);
+      delay (500);        
+    }
+    else {
+      mp3_play (33);
+      delay (1000);
+    }    
+    menuLepteto = 0;
+  }
+
+  lcd.clear ();
+  if(beuzemeles == 1){
+    reSet = 1;
+    delay (500);
+    mp3_set_volume (hangero);
+    mp3_set_EQ (eq);
+    mp3_play (33);
+    delay (2000);
+    lcd.setCursor (0, 0);
+    lcd.print ("beuzemeles      ");
+    lcd.setCursor (0, 1);
+    lcd.print (" Vizszint:");
+    mp3_play (31);
+    delay (4000);
+  }
+  while (beuzemeles == 1){
+    funkcioGomb ();
+    menuValasztoGomb ();
+    lcd.setCursor (11, 1);
+    lcd.print (menuLepteto + magTartVizSz);
+    if(encodergomb == LOW) {
+      hangosSzam = magTartVizSz + menuLepteto;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);     
+      mp3_play (34);
+      delay (1000);
+      ertekBonto ();
+      hangosSzamok ();     
+      mp3_play (48);
+      delay (1800);
+      mp3_play (32);
+      delay (6000);
+      if (meroSerial.available ()) {
+        adatAVet ();      
+        magTartVizSz = magTartVizSz + menuLepteto;
+        beuzemeles = 0;
+        inditas = 1;
+        reSet = 1;
+        menuLepteto = 0;
+        rogzMagas = vszint;
+        eprElso = rogzMagas / 100;
+        EEPROM.write (6, eprElso);
+        eprMasodik = rogzMagas - (eprElso * 100);
+        EEPROM.write (7, eprMasodik);
+        delay (1000);
+        lcd.setCursor (13, 0);
+        lcd.print (rogzMagas);
+        delay (1000);
+        eprElso = magTartVizSz / 100;
+        EEPROM.write (0, eprElso);
+        eprMasodik = magTartVizSz - (eprElso * 100);
+        EEPROM.write (1, eprMasodik);
+      }
+      mp3_play (34);
+      delay (1000);
+      delay (4000);
+    }
+  }
+
+  lcd.clear ();
+  if(uzemi == 1){
+    lcd.setCursor (0, 0);
+    lcd.print (" Vizszint:      ");
+    menuLepteto = 0;
+  } 
+  while (uzemi == 1){
+    dddd = analogRead (A3);
+    autoKommunikacio ();
+    funkcioGomb ();
+    menuValasztoGomb ();
+    kijelzoFeny ();
+    adatAVet ();
+    autoRiaszElesito ();
+    if (dddd > 1000) {
+      if (atlagSzamolo == 10000 && komm == 0){
+        atlSzam++;
+        if (atlSzam == 30){
+          usz = 0;
+          atlSzam = 0;
+        }
+        atlagSzamolo = 0;
+      }
+    }
+    lcd.setCursor (11, 0);
+    lcd.print (vizszint);
+    if (usz == 0) {
+      hangosSzam = vizszint;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);	
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (51);
+        delay (2000);
+        mp3_play (36);
+        delay (2000);
+        ertekBonto();
+        hangosSzamok();
+        mp3_play (48);
+        delay (1250);
+        delay (1000);
+      }
+      delay (2000);
+      usz = 2;
+    }
+    if (dddd > 1000) {
+      riasztas ();
+      if (cccc == 0){
+        mp3_play  (52);
+        delay (2000);
+        mp3_play (54);
+        delay (3000);
+        cccc = 1;
+      }
+    }
+    if (dddd == 0) {
+      if (cccc == 1) {
+        mp3_play  (52);
+        delay (2000);
+        mp3_play (53);
+        delay (2000);
+        cccc = 0;
+      }
+    }
+    if (menuLepteto == 0 && u == 0) {
+      lcd.setCursor (0, 1);
+      lcd.print ("Mi:      Ma:    ");
+      lcd.setCursor (3, 1);
+      lcd.print (minSzint);
+      lcd.setCursor (12, 1);
+      lcd.print (maxSzint);
+      u = 1;
+      kjhfeny = 0;
+      if (minSzint == 0 && maxSzint == 0) {
+        digitalWrite (5, HIGH);
+        delay (1000);
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);	
+        if (komm == 1) {
+          mp3_play (50);
+          delay (500);        
+        }
+        else {
+          mp3_play  (52);
+          delay (2000);
+          mp3_play (41);
+          delay (6000);
+        }
+        digitalWrite (5, LOW);       
+      }
+      else {
+        minRiasztasKi = 0;
+        maxRiasztasKi = 0;
+        l = 0;
+        if (usz == 2){
+          delay (1000);
+          mp3_set_volume (hangero);
+          mp3_set_EQ (eq);
+          if (komm == 1) {
+            mp3_play (50);
+            delay (500);        
+          }
+          else {
+            mp3_play (37);
+            delay (1500);
+            hangosSzam = minSzint;
+            ertekBonto ();
+            hangosSzamok ();
+            delay (200);
+            mp3_play (38);
+            delay (2000);
+            hangosSzam = maxSzint;
+            ertekBonto ();
+            hangosSzamok ();
+            mp3_play (48);
+            delay (1250);
+            delay (2000);
+          }
+          usz = 3;
+        }
+      }
+    }
+    if (menuLepteto == 1) {
+      menuLepteto = 0;
+      u = 0;
+    }
+    if (encodergomb == LOW) {
+      uzemi = 0;
+      beallitas = 1;
+      menuLepteto = 0;
+      delay (200);
+    }
+  }
+
+  lcd.clear ();
+  while(beallitas == 1){
+    if (beallKiirTilto == 0){
+      lcd.setCursor (0, 0);
+      lcd.print (" Beallitas menu ");
+      fmsz = 0;
+      beallKiirTilto = 1;
+    }
+    autoKommunikacio ();
+    u = 0;
+    usz = 0;
+    funkcioGomb ();
+    menuValasztoGomb ();
+    kijelzoFeny ();
+    if (menuLepteto == 0){
+      lcd.setCursor (0, 1);
+      lcd.print ("Valassz  <--O-->");
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);
+      if(fmsz == 0){
+        if (komm == 1) {
+          mp3_play (50);
+          delay (500);        
+        }
+        else {
+          mp3_play (39);
+          delay (8000);
+        }
+        fmsz = 1;
+      }
+    }
+    if (menuLepteto == 1){
+      lcd.setCursor (0, 1);
+      lcd.print ("MIN szint jelzes");
+      if (encodergomb == LOW) {
+        beallAlmenu = 1;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    minimalSzint ();
+
+    if (menuLepteto == 2){
+      lcd.setCursor (0, 1);
+      lcd.print ("MAX szint jelzes");
+      if (encodergomb == LOW) {
+        beallAlmenu = 2;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    maximalSzint ();
+
+    if (menuLepteto == 3){
+      lcd.setCursor (0, 1);
+      lcd.print ("   Korrekcio    ");
+      if (encodergomb == LOW) {
+        beallAlmenu = 3;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    szintKorrekcio ();
+
+    if (menuLepteto == 4){
+      lcd.setCursor (0,1);
+      lcd.print ("    Hangero     ");
+      if (encodergomb == LOW) {
+        beallAlmenu = 4;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    hangeroBeall ();
+
+    if (menuLepteto == 9){
+      lcd.setCursor (0, 1);
+      lcd.print ("  Bemutatkozas  ");
+      if(encodergomb == LOW){
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        if (komm == 1) {
+          mp3_play (50);
+          delay (500);        
+        }
+        else{
+          //          mp3_play (22);
+          //          delay (93000);
+          delay (1000);
+        }
+      }
+    }
+
+    if (menuLepteto == 5){   
+      lcd.setCursor (0, 1);
+      lcd.print (" Kijelzo hatter ");
+      if (encodergomb == LOW) {
+        beallAlmenu = 5;
+        menuLepteto = 2;
+        delay (500);
+      }
+    }
+    kijelzoHattervilag ();
+
+    if (menuLepteto == 7){
+      lcd.setCursor (0, 1);
+      lcd.print ("    KILEPES     ");
+      if (encodergomb == LOW) {
+        beallitas = 0;
+        ujrainditas = 1;
+        menuLepteto = 0;
+        beallKiirTilto = 0;
+        delay (500);
+      }
+    }
+
+    if (menuLepteto == 8){ 
+      lcd.setCursor (0, 1);
+      lcd.print ("> kikapcsolas  <");
+      if (encodergomb == LOW) {
+        beallitas = 0;
+        leallitas = 1;
+        menuLepteto = 0;
+        beallKiirTilto = 0;
+        delay (500);
+      }
+    }
+
+    if (menuLepteto == 6){
+      lcd.setCursor (0, 1);
+      lcd.print ("   Equalizer    ");
+      if (encodergomb == LOW) {
+        beallAlmenu = 6;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    equalizerBeall ();
+
+    if (menuLepteto == 10){
+      lcd.setCursor (0, 1);
+      lcd.print ("  Kommunikacio  ");
+      if (encodergomb == LOW) {
+        beallAlmenu = 7;
+        menuLepteto = 0;
+        delay (500);
+      }
+    }
+    kommunikacioBeall ();
+  }
+  lcd.clear ();
+  while (ujrainditas == 1){ 
+    kijelzoFeny ();
+    lcd.setCursor (0, 0);    
+    lcd.print ("ujrainditas ");
+    szf = 1;
+    szovegFutas ();
+    delay (500);
+    ujrainditas = 0;
+    inditas = 1;
+    menuLepteto = 0;
+    kszv = 0;
+    beallKiirTilto = 0;
+  }
+
+  lcd.clear ();    
+  while (leallitas == 1) {
+    funkcioGomb (); 
+    lcd.setCursor (0, 0);
+    lcd.setCursor (0, 1);
+    lcd.print ("ULTRASONIC--3350");
+    for (leSzam = 0; leSzam <= 2; leSzam++){
+      if (leSzam == 0){
+        lcd.setCursor (0, 0);
+        lcd.print (">    Varj..    <");
+        delay (3000);
+      }
+      else {
+        if (leSzam == 1) {
+          lcd.setCursor (0, 0);
+          lcd.print (">>   Varj..   <<");
+          delay (3000);
+        }
+        else {
+          lcd.setCursor (0, 0);
+          lcd.print (">>>  Varj..  <<<");
+          delay (3000);
+        }
+      }
+      funkcioGomb ();
+      delay (500); 
+      while (encodergomb == LOW && reSet == 1){
+        funkcioGomb (); 
+        if (gyB <= 9) {
+          gyB++;
+          delay (100);
+        }
+        else {
+          leallitas = 0;
+          kikapcsolas = 0;
+          gyB = 0;
+          lcd.setCursor (0, 0);
+          lcd.print ("!visszaallitas!!");
+          visszaallitas = 1;
+          menuLepteto = 0;
+        }
+      }
+    }
+    if (visszaallitas == 0){
+      if (reSet == 0){
+        beuzemeles = 1;
+        beallKiirTilto = 0;
+      }
+      else {
+        kikapcsolas = 1;
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        mp3_play (50);
+        delay (4000);
+
+      }
+      leallitas = 0;
+    }
+  }
+
+  lcd.clear ();
+  while (visszaallitas == 1) {
+    funkcioGomb ();
+    menuValasztoGomb ();  
+    lcd.setCursor (0, 0);
+    lcd.print (">Redszer adatok<");
+    lcd.setCursor (0, 1);
+    lcd.print (">TORLESE?< ");
+    if(menuLepteto == 0){
+      lcd.setCursor (11, 1);
+      lcd.print ("  NEM");
+      if(encodergomb == LOW){
+        visszaallitas = 0;
+        leallitas = 0;
+        kikapcsolas = 1;
+        delay (1000);  
+      }
+    }
+    else {
+      lcd.setCursor (11, 1);
+      lcd.print (" IGEN");
+      if (encodergomb == LOW){
+        EEPROM.write (0, 80);
+        delay (50);
+        EEPROM.write (1, 0);
+        delay (50);
+        EEPROM.write (2, 0);
+        delay (50);
+        EEPROM.write (3, 0);
+        delay (50);
+        EEPROM.write (4, 0);
+        delay (50);
+        EEPROM.write (5, 0);
+        delay (50);
+        EEPROM.write (6, 0);
+        delay (50);
+        EEPROM.write (7, 0);
+        delay (50);
+        EEPROM.write (8, 0);
+        delay (50);
+        EEPROM.write (9, 0);
+        delay (50);
+        delay (1000);
+        softReset ();
+      }
+    }
+    if (menuLepteto == 2){
+      menuLepteto = 0;
+    }
+  }
+
+  lcd.clear ();
+  while (kikapcsolas == 1){ 
+    digitalWrite (10, LOW);
+    funkcioGomb ();
+    kijelzoFeny ();
+    lcd.setCursor (0, 0);
+    lcd.print ("  Kikapcsolva  ");
+    reSet = 1;
+    szf = 0;
+    for (f = 0; f <= 15; f++){
+      funkcioGomb ();
+      beKapcsolas ();
+
+      lcd.setCursor (f, 1);
+      if (kszv == 0) {
+        lcd.print (kikapcsTomb[f]);
+      }
+      if (kszv == 1) {
+        lcd.print (kikapcsTomb2[f]);
+      }
+      if (kszv == 2) {
+        lcd.print (kikapcsTomb3[f]);
+      }
+      delay (120);
+      if (f == 15){
+        if (kszv == 0){
+          kszv = 1;
+        }
+        else {
+          if (kszv == 1){
+            kszv = 2;
+          }
+          else kszv = 0;
+        }
+        delay (2500);
+        lcd.clear ();
+      }
+    }
+  }
+}
+
+//   Fuggvenyek ----------------------------------------------------------------
+
+void eepromRead () {
+  eprElso = EEPROM.read (0);
+  eprMasodik = EEPROM.read (1);
+  magTartVizSz = (eprElso * 100) + eprMasodik;
+  delay (100); 
+  eprElso = EEPROM.read (2);
+  eprMasodik = EEPROM.read (3);
+  minSzint = (eprElso * 100) + eprMasodik;
+  delay (100); 
+  eprElso = EEPROM.read (4);
+  eprMasodik = EEPROM.read (5);
+  maxSzint = (eprElso * 100) + eprMasodik;
+  delay (100);
+  eprElso = EEPROM.read (6);
+  eprMasodik = EEPROM.read (7);
+  rogzMagas = (eprElso * 100) + eprMasodik;
+  delay (100);
+  korrekcioTmp = EEPROM.read (8);
+  delay (100);
+  korrekcioEjel = EEPROM.read (9);
+  delay (100);
+  if (korrekcioEjel == 1) {
+    invs = korrekcioTmp * korrekcioTmp;
+    korrekcio = invs - (korrekcioTmp * (korrekcioTmp + 1));   
+  }
+}
+
+void bootSelect () {
+  if (rogzMagas != 0) {
+    inditas = 1;
+  }
+  if (rogzMagas == 0) {
+    tavMeres = 1;
+  }
+}
+
+void adatAVet () {
+  atlagSzamolo++;
+  if (meroSerial.available ()) {
+    noUs = 0;
+    analogWrite (11, 70);
+    xIbit = meroSerial.read ();
+    if (xIbit >= 120) {
+      Elso = (xIbit - 120) * 100;
+      delay (5);
+    }
+    else {
+      Masodik = xIbit;
+    }
+    vszint = Elso + Masodik;    
+    delay (50);  
+    aaaa = 0;
+    digitalWrite (11, LOW);
+    if (tavMeres == 0){
+      vizszint = (magTartVizSz + (rogzMagas - vszint)) + korrekcio;
+      if (ssd == 2 ) {
+        if (vizszintTmp == 0) {
+          vizszintTmp = vizszint;
+        }
+        if (vizszint < vizszintTmp - 5) {
+          vizszint = vizszintTmp; 
+        }       
+        if (vizszint > vizszintTmp + 5) {
+          vizszint = vizszintTmp; 
+        }     
+        vizszintTmp = vizszint;   
+      }
+      else ssd++;
+      kijelSerial.write ((vizszint / 100) + 120);
+      delay (50);
+      kijelSerial.write (vizszint - ((vizszint / 100) * 100));
+    }
+    else {
+      vizszint = vszint;
+      kijelSerial.write ((vizszint / 100) + 120);
+      delay (50);
+      kijelSerial.write (vizszint - ((vizszint / 100) * 100));
+    }
+  }
+  else {
+    noUs++;
+    if (noUs == 30000) {
+      noUs = 10000;
+      mp3_play  (52);
+      delay (2000);
+      mp3_play  (52);
+      delay (2000);
+      mp3_play  (55);
+      delay (4000);
+    }
+  }
+}
+
+void autoRiaszElesito () {
+  riasztSzintKozep = ((maxSzint) - (minSzint)) / 2;
+  if (vizszint > (minSzint) + riasztSzintKozep){
+    minRiasztasKi = 0;
+  } 
+  if (vizszint < (maxSzint) - riasztSzintKozep){
+    maxRiasztasKi = 0;
+  }
+}
+
+void minimalSzint () {
+  if (beallAlmenu == 1){
+    lcd.setCursor (0, 0);
+    lcd.print ("Add meg a MIN   ");
+    lcd.setCursor (0, 1);
+    lcd.print (" szintet:   ");
+  }
+  while (beallAlmenu == 1) {
+    if (xx == 0) {
+      if (minSzint == 0) {
+        menuLepteto = minSzint + 8000;
+      }
+      else menuLepteto = minSzint;
+    }
+    funkcioGomb ();
+    menuValasztoGomb ();
+    lcd.setCursor (12, 1);
+    lcd.print (menuLepteto);
+    xx = 1;
+    if (encodergomb == LOW) {  
+      minSzint = menuLepteto;
+      eprElso = minSzint / 100;
+      EEPROM.write (2, eprElso);
+      eprMasodik = minSzint - (eprElso * 100);
+      EEPROM.write (3, eprMasodik);
+      menuLepteto = 1;
+      beallAlmenu = 0;
+      xx = 0;
+      hangosSzam = minSzint;
+      beallKiirTilto = 0;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);	
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (34);
+        delay (1000);
+        mp3_play (37);
+        delay (2000);
+        ertekBonto ();
+        hangosSzamok ();
+        mp3_play (48);
+        delay (1250);
+      }
+      usz = 2;
+    }
+  }
+}
+
+void maximalSzint () {
+  if (beallAlmenu == 2){
+    lcd.setCursor (0, 0);
+    lcd.print ("Add meg a MAX   ");
+    lcd.setCursor (0, 1);
+    lcd.print (" szintet:   ");
+  }
+  while (beallAlmenu == 2) {
+    if (xx == 0) {
+      if (maxSzint == 0) {
+        menuLepteto = maxSzint + 8000;
+      }
+      else menuLepteto = maxSzint;      
+    }
+    funkcioGomb ();
+    menuValasztoGomb ();  
+    lcd.setCursor (12, 1);
+    lcd.print (menuLepteto);
+    xx = 1;
+    if (encodergomb == LOW) {  
+      maxSzint = menuLepteto;
+      eprElso = maxSzint / 100;
+      EEPROM.write (4, eprElso);
+      eprMasodik = maxSzint - (eprElso * 100);
+      EEPROM.write (5, eprMasodik);
+      menuLepteto = 2;
+      beallAlmenu = 0;
+      xx = 0;
+      hangosSzam = maxSzint;
+      beallKiirTilto = 0;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);	
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (34);
+        delay (1000);
+        mp3_play (40);
+        delay (2000);
+        ertekBonto ();
+        hangosSzamok ();
+        mp3_play (48);
+        delay (1250);
+      }
+      usz = 2;
+    }
+  }
+}
+
+void szintKorrekcio () {
+  if (beallAlmenu  == 3){
+    lcd.setCursor (0, 0);
+    lcd.print ("Korrekcio  (   )");
+    if (korrekcio >= 0){
+      lcd.setCursor (13, 0);
+      if (korrekcio > 0){
+        lcd.setCursor (12, 0);
+        lcd.print ("+");
+      }
+    }
+    else lcd.setCursor (12, 0);
+    lcd.print (korrekcio);
+    lcd.setCursor (0, 1);
+    lcd.print ("Vizszint  ");
+    lcd.setCursor (12, 1);
+    lcd.print (" cm");
+    korr = korrekcio;
+    korrekcio = 0;
+    menuLepteto = 10;
+    korrekcio = (korrekcio - 10) + menuLepteto;
+  }
+  while (beallAlmenu == 3){
+    funkcioGomb ();
+    menuValasztoGomb ();
+    if (menuLepteto == 10){
+      lcd.setCursor (10, 1);
+      lcd.print (" ");
+      lcd.setCursor (12, 1);
+      lcd.print (" ");
+      lcd.setCursor (11, 1);
+      lcd.print ((korrekcio + menuLepteto) - 10);
+    }
+    if (menuLepteto > 10){
+      lcd.setCursor (10, 1);
+      lcd.print ("+");
+      lcd.setCursor (11, 1);
+      lcd.print ((korrekcio + menuLepteto) - 10);
+      if (menuLepteto != 20) {
+        lcd.setCursor (12, 1);
+        lcd.print (" ");
+      }
+    }
+    if (menuLepteto < 10){
+      lcd.setCursor (10, 1);
+      lcd.print ((korrekcio + menuLepteto) - 10);
+      if (menuLepteto != 0){
+        lcd.setCursor (12, 1);
+        lcd.print (" ");
+      }
+    }
+    if (encodergomb == LOW) {
+      korrekcio = (korrekcio + menuLepteto) - 10;
+      korrekcioTmp = korrekcio;
+      beallAlmenu = 0;
+      menuLepteto = 3;
+      beallKiirTilto = 0;
+      if (korrekcioTmp < 0) {
+        invs = korrekcioTmp * korrekcioTmp;
+        korrekcioTmp = invs - (korrekcioTmp * (korrekcioTmp + 1));
+        korrekcioEjel = 1;
+        Serial.println (korrekcioEjel);
+      }
+      EEPROM.write (8, korrekcioTmp);
+      delay (50);
+      EEPROM.write (9, korrekcioEjel);
+      delay (50);
+
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);	
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (42);
+        delay (2500);
+        hangosSzam = korrekcio;
+        ertekBonto ();
+        hangosSzamok ();
+        mp3_play (48);
+        delay (1250);
+      }
+    }  
+  }    
+}
+
+void hangeroBeall () {
+  if (beallAlmenu == 4){
+    lcd.setCursor (0, 0);
+    lcd.print (" Add meg a hang ");
+    lcd.setCursor (0, 1);
+    lcd.print ("  erosseget:    ");
+  }
+  while (beallAlmenu == 4) {
+    funkcioGomb ();
+    menuValasztoGomb ();
+    if (menuLepteto < 10){
+      lcd.setCursor (14, 1);
+      lcd.print (" ");
+    }
+    lcd.setCursor (13, 1);
+    lcd.print (menuLepteto);
+    if (encodergomb == LOW) {  
+      hangero = menuLepteto;
+      noHangero = menuLepteto;
+      hangosSzam = hangero;
+      beallKiirTilto = 0;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (34);
+        delay (1000);
+        mp3_play (45);
+        delay (2000);
+        ertekBonto ();
+        hangosSzamok ();
+        delay (1000);
+      }
+      menuLepteto = 4;
+      beallAlmenu = 0;
+    }
+  }
+}
+
+void kijelzoHattervilag () {
+  if (beallAlmenu == 5){
+    lcd.setCursor (0, 0);
+    lcd.print (" Kijelzo hatter ");
+    lcd.setCursor (0, 1);
+    lcd.print (" feny ");
+    lcd.setCursor (8, 1);
+    lcd.print (" mperc  ");
+  }
+  while (beallAlmenu == 5){
+    funkcioGomb ();
+    menuValasztoGomb ();
+    if (menuLepteto < 10) {
+      lcd.setCursor (6, 1);
+      lcd.print (0);
+      lcd.setCursor (7, 1);
+      lcd.print (menuLepteto);
+    }
+    else {  
+      lcd.setCursor (6, 1);
+      lcd.print (menuLepteto);
+    } 
+    if (encodergomb == LOW) {
+      kjhfenyIdo = menuLepteto * 150;
+      menuLepteto = 5;
+      beallAlmenu = 0;
+      beallKiirTilto = 0;
+      delay (200);
+    }
+  }
+}
+
+void equalizerBeall () {
+  if (beallAlmenu == 6){
+    lcd.setCursor (0, 0);
+    lcd.print ("Add meg az EQ   ");
+    lcd.setCursor (0, 1);
+    lcd.print (" erteket:   ");
+  }
+  while (beallAlmenu == 6) {
+    funkcioGomb ();
+    menuValasztoGomb ();  
+    lcd.setCursor (12, 1);
+    lcd.print ((menuLepteto));
+    if (encodergomb == LOW) {  
+      eq = menuLepteto;
+      menuLepteto = 6;
+      beallAlmenu = 0;
+      hangosSzam = eq;
+      beallKiirTilto = 0;
+      mp3_set_volume (hangero);
+      mp3_set_EQ (eq);
+      if (komm == 1) {
+        mp3_play (50);
+        delay (500);        
+      }
+      else {
+        mp3_play (34);
+        delay (1000);
+        mp3_play (49);
+        delay (2000);
+        ertekBonto ();
+        hangosSzamok ();
+        delay (1000);
+      }
+    }
+  }
+}
+
+void kommunikacioBeall () {
+  if (beallAlmenu == 7){
+    lcd.setCursor (0, 0);
+    lcd.print ("  Kommunikacio  ");
+  }
+  while (beallAlmenu == 7) {
+    funkcioGomb ();
+    menuValasztoGomb ();  
+    lcd.setCursor (0, 1);
+    if (menuLepteto == 0) {
+      lcd.print ("     Beszed     ");
+      autoKomm = 0;
+      komm = 0;
+    }
+    if (menuLepteto == 1) {
+      lcd.print ("     Jelzes     ");
+      autoKomm = 0;
+      komm = 1;
+    }
+    if (menuLepteto == 2) {
+      lcd.print ("  Automatikus   ");
+      autoKomm = 1;
+    }
+    if (menuLepteto == 3){
+      menuLepteto = 0;
+    }
+
+    if (encodergomb == LOW) {
+      beallAlmenu = 0;
+      menuLepteto = 10;
+      beallKiirTilto = 0;
+      delay (1000);  
+    }
+  }
+}
+
+void beKapcsolas () {
+  if (encodergomb == LOW){
+    f = 16;
+    kikapcsolas = 0;
+    inditas = 1;
+  }
+}
+
+void funkcioGomb () {
+  encodergomb = digitalRead (encoderNyg);
+}
+
+void riasztas () {
+  if (vizszint <= minSzint) {
+    while (minRiasztasKi == 0){
+      kijelSerial.write (230);
+      kjhfeny = 0;
+      lcd.backlight ();
+      digitalWrite (5, HIGH);
+      digitalWrite (7, HIGH);
+      if (komm == 1) {
+        if (hangeroLe == 0) {
+          hangero = 0;
+          hangeroLe = 1;
+        }
+        if (hangero <= 25){
+          hangero++;
+        }
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        mp3_play (47);
+        delay (5000);
+      }
+      else {
+        hangero = noHangero;
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        mp3_play (47);
+        delay (2000);
+        mp3_play (23);
+        delay (1000);
+        mp3_play (26);
+        delay (1500);
+        hangosSzam = vizszint;
+        ertekBonto ();
+        hangosSzamok ();
+        mp3_play (48);
+        delay (1500);
+        mp3_play (24);
+        hangeroLe = 0;
+        delay (5000);
+      }
+      if (digitalRead( A1 ) == HIGH) {
+        digitalWrite (5, LOW);
+        digitalWrite (7, LOW);
+        hangeroLe = 0;
+        hangero = noHangero;
+        minRiasztasKi = 1;
+      }
+    }
+  }
+  if (vizszint >= maxSzint) {
+    while (maxRiasztasKi == 0){
+      kijelSerial.write (240);
+      kjhfeny = 0;
+      lcd.backlight ();
+      digitalWrite (5, HIGH);
+      digitalWrite (7, HIGH);
+      if (komm == 1) {
+        if (hangeroLe == 0) {
+          hangero = 0;
+          hangeroLe = 1;
+        }
+        if (hangero <= 25){
+          hangero++;
+        }
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        mp3_play (47);
+        delay (5000);
+      }
+      else {
+        mp3_set_volume (hangero);
+        mp3_set_EQ (eq);
+        mp3_play (47);
+        delay (2000);
+        mp3_play (23);
+        delay (1000);
+        mp3_play (26);
+        delay (1500);
+        hangosSzam = vizszint;
+        ertekBonto ();
+        hangosSzamok ();
+        mp3_play (48);
+        delay (1500);
+        mp3_play (25);
+        hangeroLe = 0;
+        delay (5000);
+      }
+      if (digitalRead( A1 ) == HIGH) {
+        digitalWrite (5, LOW);
+        digitalWrite (7, LOW);
+        hangeroLe = 0;
+        hangero = noHangero;
+        maxRiasztasKi = 1;
+      }
+    }
+  }
+}
+
+void menuValasztoGomb () {
+  if (beallAlmenu == 1 || beallAlmenu == 2){
+    menuLepSzint = 10000;
+  }
+  if (beallAlmenu == 3){
+    menuLepSzint = 20;
+  }
+  if (beallAlmenu == 4){
+    menuLepSzint = 30;
+  }
+  if (beallAlmenu == 5){
+    menuLepSzint = 90;
+  }
+  if (beallAlmenu == 6){
+    menuLepSzint = 5;
+  }
+  if (beallAlmenu == 7){
+    menuLepSzint = 3;
+  }
+  if (beallAlmenu == 0){
+    menuLepSzint = 10;
+  }
+  if (beuzemeles == 1){
+    menuLepSzint = 1000;
+  }
+  n = digitalRead( encoder0PinA );
+  if ((encoder0PinALast == LOW) && (n == HIGH)) {
+    if (digitalRead(encoder0PinB) == LOW) {
+      if (beallAlmenu == 1 || beallAlmenu == 2){      
+        menuLepteto--;
+      } 
+      else {
+        if (menuLepteto > 0){
+          menuLepteto--;
+          s = 5;
+        }
+      }
+    }
+    else {
+      if (menuLepteto < menuLepSzint){
+        menuLepteto++;
+        s = 5;
+      }
+    } 
+  }
+  encoder0PinALast = n;
+}
+
+void szovegFutas () {
+  for (f = 0; f <= 15; f++){
+    if (szf == 0) {
+      randNumber = random (1, 1000);
+    }
+    if (szf == 1) {
+      randNumber = random (2, 300);
+    }
+    if (szf == 4) {
+      randNumber = 500;
+    }
+    bt = 6.67 * f;
+    if (bt < 10){
+      lcd.setCursor (14, 0);
+      lcd.print (bt);      
+    }
+    if (bt > 10){
+      lcd.setCursor (13, 0);
+      lcd.print (bt);      
+    }
+    if (bt == 100){
+      lcd.setCursor (12, 0);
+      lcd.print (bt);      
+    }
+    lcd.setCursor (15, 0);
+    lcd.print ("%");
+    if (szf == 0){
+      lcd.setCursor (f, 1);
+      lcd.print (initTomb[f]);
+    }
+    delay ( randNumber );
+  }
+}
+
+void sugoSzovegKiiras () {
+  if (s == 0){
+    for (s = 0; s < 4; s++) {
+      sugoSzoveg ();
+      fmsz = 0;
+    }
+  }
+  if (s == 6){
+    s = 0;
+  }
+  if (s >= 7) {
+    s--;
+    delay (10);
+  }
+}
+
+void sugoSzoveg () {
+  lcd.clear ();
+  if (sugoFsor == 4) {
+    lcd.setCursor (0, 0);
+    lcd.print ("Beallitas menu");
+
+  }
+}
+
+void kijelzoFeny () { 
+  if (uzemi == 1) {
+    if (komm == 0){
+      if (kjhfeny < kjhfenyIdo){
+        lcd.backlight ();
+        kjhfeny++;
+      }
+      if (kjhfeny == kjhfenyIdo) {
+        lcd.noBacklight ();
+      }
+    }
+    else lcd.backlight ();
+  }
+  else {
+    if (kikapcsolas == 1) {
+      if (kjhfeny < 4)
+      {
+        lcd.backlight ();
+        kjhfeny++;
+      }
+      if (kjhfeny == 4) {
+        lcd.noBacklight ();
+      }
+    }
+    else{
+      lcd.backlight ();
+      kjhfeny = 0;
+    }
+  }
+}
+
+void softReset (){
+  asm volatile (" jmp 0");
+}
+
+void ertekBonto () {
+  if (hangosSzam < 0){
+    noInv = hangosSzam;
+    invertal ();
+    hangosSzam = inv;
+    hangszamNeg = 1;
+  }
+  else hangszamNeg = 0;
+  reszEredmeny = hangosSzam / 10;
+  egyes = hangosSzam - (reszEredmeny * 10);
+  reszEredmeny2 = hangosSzam / 100;
+  tizesegybe = (hangosSzam - (reszEredmeny2 * 100));
+  tizes = (hangosSzam - (reszEredmeny2 * 100)) / 10;
+  ezres = hangosSzam / 1000;
+  szazas = (hangosSzam / 100) - (ezres * 10);
+  for (a=0; a <= 3; a++) {
+    if (a == 0){
+      ezer = ezres;
+    }  
+    if (a == 1){
+      szaz = szazas;
+    }  
+    if (a == 2){
+      tiz = tizes;
+    }  
+    if (a == 3){
+      egy = egyes;
+    }
+  }
+}
+
+void hangosSzamok () {
+  mp3_set_volume (hangero);
+  mp3_set_EQ (eq);
+  if (hangszamNeg == 1){
+    mp3_play (43);
+    delay (900);
+  }
+  if (ezer != 0){
+    if (ezer != 1){
+      mp3_play (hangSzam[ezer]);
+      delay (hangHossz[ezer]);
+    }
+    mp3_play (hangSzam[19]);
+    delay (hangHossz[19]);
+  }
+  if (szaz != 0){
+    if (szaz != 1){
+      mp3_play (hangSzam[szaz]);
+      delay (hangHossz[szaz]);
+    }
+    mp3_play (hangSzam[0]);
+    delay (hangHossz[0]);
+  }
+  if (tizesegybe == 0){
+    if (ezer == 0 && szaz == 0){
+      mp3_play (44);
+      delay (550);
+    }
+  }
+  if (tizesegybe > 0 && tizesegybe < 10){
+    mp3_play (hangSzam[egy]);
+    delay (hangHossz[egy]);       
+  }
+  if (tizesegybe == 10){
+    mp3_play (hangSzam[10]);
+    delay (hangHossz[10]);
+  }
+  if (tizesegybe > 10 && tizesegybe < 20){
+    mp3_play (hangSzam[11]);
+    delay (hangHossz[11]);
+    mp3_play (hangSzam[egy]);
+    delay (hangHossz[egy]);       
+  }
+  if (tizesegybe == 20){
+    mp3_play (hangSzam[20]);
+    delay (hangHossz[20]);
+  }
+  if (tizesegybe > 20 && tizesegybe < 30){
+    mp3_play (hangSzam[21]);
+    delay (hangHossz[21]);
+    mp3_play (hangSzam[egy]);
+    delay (hangHossz[egy]);       
+  }       
+  if (tizesegybe > 29 && tizesegybe < 40){
+    mp3_play (hangSzam[12]);
+    delay (hangHossz[12]);
+    if (tizesegybe == 30) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 39 && tizesegybe < 50){
+    mp3_play (hangSzam[13]);
+    delay (hangHossz[13]);
+    if (tizesegybe == 40) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 49 && tizesegybe < 60){
+    mp3_play (hangSzam[14]);
+    delay (hangHossz[14]);
+    if (tizesegybe == 50) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 59 && tizesegybe < 70){
+    mp3_play (hangSzam[15]);
+    delay (hangHossz[15]);
+    if (tizesegybe == 60) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 69 && tizesegybe < 80){
+    mp3_play (hangSzam[16]);
+    delay (hangHossz[16]);
+    if (tizesegybe == 70) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 79 && tizesegybe < 90){
+    mp3_play (hangSzam[17]);
+    delay (hangHossz[17]);
+    if (tizesegybe == 80) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+  if (tizesegybe > 89 && tizesegybe <= 99){
+    mp3_play (hangSzam[18]);
+    delay (hangHossz[18]);
+    if (tizesegybe == 90) {
+      mp3_play (hangSzam[23]);
+    }
+    else {
+      mp3_play (hangSzam[egy]);
+      delay (hangHossz[egy]);       
+    }
+  }
+}
+
+void invertal () {
+  invs = noInv * noInv;
+  inv = invs - (noInv * (noInv + 1));
+}
+
+void autoKommunikacio () {
+  if (autoKomm == 1) {
+    if (analogRead( A0 ) < 100){      
+      komm = 0;
+    }
+    if (analogRead( A0 ) > 200){
+      komm = 1;
+    }
+  }
+} 

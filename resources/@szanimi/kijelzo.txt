@@ -1,0 +1,158 @@
+#include <SoftwareSerial.h>
+#include <Wire.h>
+byte nyilKozosPin = 11;
+byte nyilLePin = 10;
+byte nyilFelPin = 9;
+int latchPin = 2;
+int dataPin = 3;
+int clockPin = 4;
+int ezresekPin = 8;
+int szazasokPin = 5;
+int tizesekPin = 6;
+int egyesekPin = 7;
+int szamtomb[] = {
+  63, 6, 91, 79, 102, 109, 125, 7, 127, 111 };
+int szintBeolvasas = 0, val1=0, val12=0;
+int reszEredmeny = 0;
+int reszEredmeny2 = 0;
+int vizSzint = 0;
+byte egyes = 0;
+byte tizes = 0;
+byte szazas = 0;
+byte ezres = 0;
+byte a = 0;
+int b = 0, elso, masodik, fff, ggg, c = 0;
+byte kijelzoAktival;
+byte kijelzoRiasztas;
+byte kijelzoRiaszt;
+int randNumber;
+byte szamjegy;
+byte kijelzoFrissites = 1;
+SoftwareSerial kijelSerial (12, 13); // RX, TX
+
+void setup () {
+  pinMode (egyesekPin, OUTPUT);
+  pinMode (tizesekPin, OUTPUT);
+  pinMode (szazasokPin, OUTPUT);
+  pinMode (ezresekPin, OUTPUT);
+  pinMode (latchPin, OUTPUT);
+  pinMode (dataPin, OUTPUT);
+  pinMode (clockPin, OUTPUT);
+  pinMode (nyilKozosPin, OUTPUT);
+  pinMode (nyilLePin, OUTPUT);
+  pinMode (nyilFelPin, OUTPUT);
+  Serial.begin (9600);
+  kijelSerial.begin (9600);
+}
+void loop () {
+  kijelzoRiasztas = 0;
+  if (kijelSerial.available ()) {
+  kijelzoAktival = 1;
+    fff = kijelSerial.read ();
+    c = 0;
+    if (fff <= 225){
+      if (fff >= 120) {
+        elso = (fff - 120) * 100;
+      }
+      else {
+        masodik = fff;
+      }
+      vizSzint = elso + masodik;
+    }
+  }
+  if (!kijelSerial.available ()) {
+    if (c <= 5000) {
+        c++;
+      digitalWrite (nyilKozosPin, LOW);
+    }
+    else {
+      kijelzoAktival = 0;
+      c = 0;
+      digitalWrite (nyilKozosPin, HIGH);
+      delay (500);
+    }
+  }
+  else c = 0;
+    if (fff == 230){
+      if (b <= 40){
+        digitalWrite (nyilKozosPin, HIGH);
+        digitalWrite (nyilLePin, HIGH);
+        b++;
+      }
+      if (b >= 20){
+        digitalWrite (nyilKozosPin, LOW);
+        digitalWrite (nyilLePin, LOW);
+        b++;
+      }
+      if (b > 60){
+        b = 0;
+      }
+    }
+    if (fff == 240){
+      if (b <= 40){
+        digitalWrite (nyilKozosPin, HIGH);
+        digitalWrite (nyilFelPin, HIGH);
+        b++;
+      }
+      if (b >= 20){
+        digitalWrite (nyilKozosPin, LOW);
+        digitalWrite (nyilFelPin, LOW);
+        b++;
+      }
+      if (b > 60){
+        b = 0;
+      }
+    }
+    if (fff <= 225) {
+      b = 0;
+      kijelzoRiaszt = 0;
+      digitalWrite (nyilKozosPin, LOW);
+      digitalWrite (nyilLePin, LOW);
+      digitalWrite (nyilFelPin, LOW);
+    }
+  reszEredmeny = vizSzint / 10;
+  egyes = vizSzint - (reszEredmeny * 10);
+  reszEredmeny2 = vizSzint / 100;
+  tizes = (vizSzint - (reszEredmeny2 * 100)) / 10;
+  ezres = vizSzint / 1000;  
+  szazas = (vizSzint / 100) - (ezres * 10);
+  for (a = 0; a <= 3; a++) {
+    digitalWrite (latchPin, LOW);
+    if (a == 0){
+      szamjegy = ezres;
+     digitalWrite (ezresekPin, HIGH);
+    }  
+    if (a == 1){
+      szamjegy = szazas;
+      digitalWrite (szazasokPin, HIGH);
+    }  
+    if (a == 2){
+      szamjegy = tizes;
+      digitalWrite (tizesekPin, HIGH);
+    }  
+    if (a == 3){
+      szamjegy = egyes;
+      digitalWrite (egyesekPin, HIGH);
+    }  
+    if (kijelzoAktival == 1){
+      shiftOut (dataPin, clockPin, MSBFIRST, szamtomb[szamjegy]);
+      if (kijelzoRiaszt == 1){
+        shiftOut (dataPin, clockPin, MSBFIRST, 0);
+      }
+      else  shiftOut (dataPin, clockPin, MSBFIRST, szamtomb[szamjegy]);
+    }
+    else  shiftOut (dataPin, clockPin, MSBFIRST, 63);
+    delay (kijelzoFrissites);  
+    digitalWrite (ezresekPin, LOW);
+    digitalWrite (szazasokPin, LOW);
+    digitalWrite (tizesekPin, LOW);
+    digitalWrite (egyesekPin, LOW);
+    digitalWrite (latchPin, HIGH);
+  }
+}
+
+
+
+
+
+

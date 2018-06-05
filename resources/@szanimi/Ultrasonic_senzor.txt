@@ -1,0 +1,46 @@
+#include <SoftwareSerial.h>
+#include "Ultrasonic.h"
+#include <Wire.h>
+Ultrasonic ultrasonic( A0, A1 );
+int distance, valos, vizszint = 0, atlagVizSzint = 0, z, kimenet;
+byte a, Elso, Masodik, Harmadik;
+//0  1  2  3  4  5  6  7  8   9  10  11  12  13  14  15  16  17  18  19  20  21  22  23  24  25  26  27  28  29  30  31  32
+byte kalibralas[33] = {
+  0, 2, 3, 3, 5, 6, 7, 8, 9, 10, 10, 12, 13, 14, 14, 15, 15, 16, 17, 18, 19, 20, 21, 23, 23, 25, 26, 26, 26, 27, 28, 30, 30};
+int vizSzintAtlag[40] = {
+  0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+SoftwareSerial meroSerial (3, 6); // RX, TX
+void setup () {
+  pinMode (3, OUTPUT);
+  pinMode (6, OUTPUT);
+  pinMode (13, OUTPUT);
+  pinMode (7, OUTPUT);
+  Serial.begin (9600);
+  meroSerial.begin (9600);
+}
+
+void loop() {
+  digitalWrite( 7, LOW);
+  for (z = 0; z <= 39; z++) {
+    distance = (ultrasonic.Ranging( CM ));
+    if (distance >= 500){
+     z--;
+      digitalWrite (7, HIGH);    
+    }
+    else { 
+      valos = (distance + kalibralas[(distance / 10)]);
+      vizSzintAtlag[z] = valos;
+      atlagVizSzint = (atlagVizSzint + vizSzintAtlag[z]);
+    } 
+    delay (250);  
+  }
+  vizszint = atlagVizSzint / 40;
+  digitalWrite (7, HIGH);
+      meroSerial.write ((vizszint / 100) + 120);
+      delay (50);
+      meroSerial.write (vizszint - ((vizszint / 100) * 100));
+  atlagVizSzint = 0;
+  delay (100);
+}
+
+
